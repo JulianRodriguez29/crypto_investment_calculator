@@ -2,7 +2,7 @@ require 'csv'
 
 class InvestmentsController < ApplicationController
 
-  before_action :fetch_crypto_prices, only: [:index, :new]
+  before_action :fetch_crypto_prices, only: [:index, :new, :export_json]
 
   def index
     @investments = Investment.all
@@ -21,13 +21,38 @@ class InvestmentsController < ApplicationController
     end
   end
 
+  def export_json
+    Rails.logger.info(@cryptocurrencies.inspect)
+    respond_to do |format|
+      format.json do
+        selected_data = @cryptocurrencies.map do |crypto|
+          {
+            name: crypto.name,
+            symbol: crypto.symbol,
+            current_price: crypto.current_price
+          }
+        end
   
+        render json: selected_data
+      end
+    end
+  end
+
+  def export_csv
+    respond_to do |format|
+      format.csv do
+        send_data to_csv, filename: 'cryptocurrencies_data.csv'
+      end
+    end
+  end
+
 
   private
 
   def fetch_crypto_prices
     crypto_data = read_crypto_data_from_csv # Llamada a la función que lee el CSV
     update_crypto_instances(crypto_data)
+    @cryptocurrencies = Cryptocurrency.all
   end
 
   def read_crypto_data_from_csv
@@ -62,11 +87,21 @@ class InvestmentsController < ApplicationController
 
   def fetch_price(crypto_symbol)
     response = HTTParty.get("https://rest.coinapi.io/v1/exchangerate/#{crypto_symbol}/USD",
-                            headers: { 'X-CoinAPI-Key' => '3B62E8B4-C275-477E-A922-9F06164FF262' })
+                            headers: { 'X-CoinAPI-Key' => '' })
     JSON.parse(response.body)['rate'] if response.success?
   end
 
   
+  def to_csv
+    attributes = %w{name symbol current_price}
+    CSV.generate(headers: true) do |csv|
+      csv << attributes
+
+      @cryptocurrencies.each do |crypto|
+        csv << attributes.map { |attr| crypto.send(attr) }
+      end
+    end
+  end
 
   def investment_params
     params.require(:investment).permit(:cryptocurrency_id, :amount)

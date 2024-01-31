@@ -2,12 +2,64 @@
 
 <% @investments.each do |investment| %>
   <p>
+    <%= image_tag("#{investment.cryptocurrency.symbol.downcase}.png", alt: investment.cryptocurrency.name, class: "crypto-icon") %>
     <%= investment.cryptocurrency.name %>: <%= investment.amount %> USD
     - Retorno Anual: <%= investment.calculate_annual_return  %> USD
     - Retorno Anual en <%= investment.cryptocurrency.name %>: <%= (investment.calculate_annual_return / investment.cryptocurrency.current_price) %> <%= investment.cryptocurrency.symbol %>
   </p>
   </p>
 <% end %>
+
+<!-- Tabla de Criptomonedas -->
+<table>
+  <thead>
+    <tr>
+      <th>Icono</th>
+      <th>Nombre</th>
+      <th>Símbolo</th>
+      <th>Precio Actual</th>
+    </tr>
+  </thead>
+  <tbody id="crypto-table-body">
+    <!-- Asegúrate de tener instancias de las tres criptomonedas disponibles -->
+    <% cryptocurrencies = Cryptocurrency.all %>
+
+    <% cryptocurrencies.each do |crypto| %>
+      <tr>
+        <td><%= image_tag("#{crypto.symbol.downcase}.png", alt: crypto.name, class: "crypto-icon") %></td>
+        <td><%= crypto.name %></td>
+        <td><%= crypto.symbol %></td>
+        <td class="crypto-price" data-symbol="<%= crypto.symbol %>"><%= crypto.current_price %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div>
+  <%= button_to 'Exportar a JSON', { action: 'export_json' }, method: :post, remote: true, class: 'export-button' %>
+  <%= button_to 'Exportar a CSV', { action: 'export_csv' }, method: :post, remote: true, class: 'export-button' %>
+</div>
+
+<!-- Script para manejar la exportación -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const exportButtons = document.querySelectorAll('.export-button');
+
+    exportButtons.forEach(button => {
+      button.addEventListener('ajax:success', (event) => {
+        const data = event.detail[0];
+        const blob = new Blob([data], { type: 'application/octet-stream' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = button.textContent.trim().toLowerCase() + '_data.' + data.format;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+    });
+  });
+</script>
+
 
 <%= link_to 'Nueva Inversión', new_investment_path %>
 
