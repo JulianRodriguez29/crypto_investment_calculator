@@ -1,0 +1,13 @@
+<h1>Lista de Inversiones</h1>
+
+<% @investments.each do |investment| %>
+  <p>
+    <%= investment.cryptocurrency.name %>: <%= investment.amount %> USD
+    - Retorno Anual: <%= investment.calculate_annual_return  %> USD
+    - Retorno Anual en <%= investment.cryptocurrency.name %>: <%= (investment.calculate_annual_return / investment.cryptocurrency.current_price) %> <%= investment.cryptocurrency.symbol %>
+  </p>
+  </p>
+<% end %>
+
+<%= link_to 'Nueva Inversión', new_investment_path %>
+

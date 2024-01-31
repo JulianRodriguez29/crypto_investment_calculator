@@ -1,0 +1,24 @@
+<h1>Nueva Inversión</h1>
+
+<p>Precio actual de Bitcoin: <%= @bitcoin_price %> USD</p>
+<p>Precio actual de Ether: <%= @ether_price %> USD</p>
+<p>Precio actual de Cardano: <%= @cardano_price %> USD</p>
+
+<%= form_with(model: @investment, url: investments_path, method: :post) do |form| %>
+  <div>
+    <%= form.label :cryptocurrency_id %>
+    <%= form.collection_select(:cryptocurrency_id, Cryptocurrency.all, :id, :name) %>
+  </div>
+
+  <div>
+    <%= form.label :amount %>
+    <%= form.number_field :amount %>
+  </div>
+
+  <div>
+    <%= form.submit 'Crear Inversión' %>
+  </div>
+<% end %>
+
+<%= link_to 'Volver a la lista de inversiones', investments_path %>
+
