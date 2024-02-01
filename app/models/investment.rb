@@ -1,5 +1,7 @@
 class Investment < ApplicationRecord
   belongs_to :cryptocurrency
+  validates :amount, presence: true, numericality: { greater_than: 0 }
+  validates_presence_of :cryptocurrency
 
   def calculate_annual_return
     monthly_return_rate = case cryptocurrency.symbol
