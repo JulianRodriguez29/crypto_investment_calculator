@@ -17,7 +17,7 @@ class InvestmentsController < ApplicationController
     if @investment.save
       redirect_to root_path, notice: 'Inversión exitosa.'
     else
-      render :new
+      redirect_back fallback_location: new_investment_path, alert: 'Error al crear la inversión.'
     end
   end
 
@@ -97,8 +97,10 @@ class InvestmentsController < ApplicationController
     CSV.generate(headers: true) do |csv|
       csv << attributes
 
-      @cryptocurrencies.each do |crypto|
-        csv << attributes.map { |attr| crypto.send(attr) }
+      if @cryptocurrencies.present? # Verifica si @cryptocurrencies no es nil
+        @cryptocurrencies.each do |crypto|
+          csv << attributes.map { |attr| crypto.send(attr) }
+        end
       end
     end
   end
