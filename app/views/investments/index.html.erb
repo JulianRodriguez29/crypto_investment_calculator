@@ -1,50 +1,56 @@
-<h1>Lista de Inversiones</h1>
+<div class="container mt-5">
+  <h1 class="mb-4">Lista de Inversiones</h1>
 
-<% @investments.each do |investment| %>
-  <p>
-    <%= image_tag("#{investment.cryptocurrency.symbol.downcase}.png", alt: investment.cryptocurrency.name, class: "crypto-icon") %>
-    <%= investment.cryptocurrency.name %>: <%= investment.amount %> USD
-    - Retorno Anual: <%= investment.calculate_annual_return  %> USD
-    - Retorno Anual en <%= investment.cryptocurrency.name %>: <%= (investment.calculate_annual_return / investment.cryptocurrency.current_price) %> <%= investment.cryptocurrency.symbol %>
-  </p>
-  </p>
-<% end %>
+  <% @investments.each do |investment| %>
+    <div class="card mb-3">
+      <div class="card-body">
+        <%= image_tag("#{investment.cryptocurrency.symbol.downcase}.png", alt: investment.cryptocurrency.name, class: "img-fluid crypto-icon") %>
+        <h5 class="card-title"><%= investment.cryptocurrency.name %>: <%= investment.amount %> USD</h5>
+        <p class="card-text">
+          Retorno Anual: <%= investment.calculate_annual_return %> USD <br>
+          Retorno Anual en <%= investment.cryptocurrency.name %>: <%= (investment.calculate_annual_return / investment.cryptocurrency.current_price) %> <%= investment.cryptocurrency.symbol %>
+        </p>
+      </div>
+    </div>
+  <% end %>
 
-<!-- Tabla de Criptomonedas -->
-<h2>Criptomonedas</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Icono</th>
-      <th>Nombre</th>
-      <th>Símbolo</th>
-      <th>Precio Actual</th>
-    </tr>
-  </thead>
-  <tbody id="crypto-table-body">
-    <!-- Asegúrate de tener instancias de las tres criptomonedas disponibles -->
-    <% cryptocurrencies = Cryptocurrency.all %>
+  <%= link_to 'Nueva Inversión', new_investment_path, class: 'btn btn-info mt-3' %>
 
-    <% cryptocurrencies.each do |crypto| %>
+  <h2 class="mt-5 mb-3">Criptomonedas</h2>
+  <table class="table">
+    <thead>
       <tr>
-        <td><%= image_tag("#{crypto.symbol.downcase}.png", alt: crypto.name, class: "crypto-icon") %></td>
-        <td><%= crypto.name %></td>
-        <td><%= crypto.symbol %></td>
-        <td class="crypto-price" data-symbol="<%= crypto.symbol %>"><%= crypto.current_price %></td>
+        <th>Icono</th>
+        <th>Nombre</th>
+        <th>Precio Actual</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody id="crypto-table-body">
+      <% @cryptocurrencies.each do |crypto| %>
+        <tr>
+          <td><%= image_tag("#{crypto.symbol.downcase}.png", alt: crypto.name, class: "img-fluid crypto-icon") %></td>
+          <td>
+            <%= crypto.name %><br>
+            <small><%= crypto.symbol %></small>
+          </td>
+          <td class="crypto-price" data-symbol="<%= crypto.symbol %>"><%= crypto.current_price %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-<div>
-  <%= button_to 'Exportar a JSON', { action: 'export_json' }, method: :post, remote: true, class: 'export-button' %>
-  <%= button_to 'Exportar a CSV', { action: 'export_csv' }, method: :post, remote: true, class: 'export-button' %>
+  <div class="mt-3 d-flex justify-content-between">
+    <%= button_to 'Exportar a JSON', { action: 'export_json' }, method: :post, remote: true, class: 'btn btn-primary' %>
+    <%= button_to 'Exportar a CSV', { action: 'export_csv' }, method: :post, remote: true, class: 'btn btn-success' %>
+  </div>
+
+ 
 </div>
 
 <!-- Script para manejar la exportación -->
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const exportButtons = document.querySelectorAll('.export-button');
+    const exportButtons = document.querySelectorAll('.btn-primary, .btn-success');
 
     exportButtons.forEach(button => {
       button.addEventListener('ajax:success', (event) => {
@@ -60,7 +66,3 @@
     });
   });
 </script>
-
-
-<%= link_to 'Nueva Inversión', new_investment_path %>
-
