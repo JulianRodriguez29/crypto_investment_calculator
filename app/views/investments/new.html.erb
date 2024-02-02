@@ -23,3 +23,19 @@
 
   <%= link_to 'Volver a la lista de inversiones', investments_path, class: 'btn btn-secondary' %>
 </div>
+
+<% if flash[:success].present? %>
+  <script>
+    Swal.fire({
+      icon: 'success',
+      title: '<%= flash[:success] %>',
+    });
+  </script>
+<% elsif flash[:alert].present? %>
+  <script>
+    Swal.fire({
+      icon: 'error',
+      title: '<%= flash[:alert] %>',
+    });
+  </script>
+<% end %>

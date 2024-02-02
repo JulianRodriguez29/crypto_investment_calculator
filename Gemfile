@@ -29,6 +29,10 @@ gem 'rails-controller-testing'
 gem 'actioncable'
 
 gem 'bootstrap-sass'
+
+gem 'jquery-rails'
+
+gem 'sweetalert2'
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 

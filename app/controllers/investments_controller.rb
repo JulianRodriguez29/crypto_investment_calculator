@@ -15,12 +15,20 @@ class InvestmentsController < ApplicationController
   def create
     @investment = Investment.new(investment_params)
     if @investment.save
-      redirect_to root_path, notice: 'Inversión exitosa.'
+      flash[:success] = 'Inversión exitosa.'
+      redirect_to root_path
     else
-      redirect_back fallback_location: new_investment_path, alert: 'Error al crear la inversión.'
+      flash[:alert] = 'Error al crear la inversión.'
+      redirect_back fallback_location: new_investment_path
     end
   end
 
+  def destroy
+    @investment = Investment.find(params[:id])
+    @investment.destroy
+    redirect_to root_path
+  end
+  
   def export_json
     Rails.logger.info(@cryptocurrencies.inspect)
     respond_to do |format|

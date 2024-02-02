@@ -2,7 +2,7 @@
   <h1 class="mb-4">Lista de Inversiones</h1>
 
   <% @investments.each do |investment| %>
-    <div class="card mb-3">
+    <div class="card mb-3 mt-2">
       <div class="card-body">
         <%= image_tag("#{investment.cryptocurrency.symbol.downcase}.png", alt: investment.cryptocurrency.name, class: "img-fluid crypto-icon") %>
         <h5 class="card-title"><%= investment.cryptocurrency.name %>: <%= investment.amount %> USD</h5>
@@ -10,7 +10,10 @@
           Retorno Anual: <%= investment.calculate_annual_return %> USD <br>
           Retorno Anual en <%= investment.cryptocurrency.name %>: <%= (investment.calculate_annual_return / investment.cryptocurrency.current_price) %> <%= investment.cryptocurrency.symbol %>
         </p>
+
+        <%= button_to 'Eliminar', investment_path(investment), method: :delete, data: { confirm: '¿Estás seguro?' }, class: 'btn btn-danger' %>
       </div>
+  
     </div>
   <% end %>
 
@@ -66,3 +69,19 @@
     });
   });
 </script>
+
+<% if flash[:success].present? %>
+  <script>
+    Swal.fire({
+      icon: 'success',
+      title: '<%= flash[:success] %>',
+    });
+  </script>
+<% elsif flash[:alert].present? %>
+  <script>
+    Swal.fire({
+      icon: 'error',
+      title: '<%= flash[:alert] %>',
+    });
+  </script>
+<% end %>
