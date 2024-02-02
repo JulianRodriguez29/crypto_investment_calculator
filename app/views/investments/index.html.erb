@@ -8,7 +8,7 @@
         <h5 class="card-title"><%= investment.cryptocurrency.name %>: <%= investment.amount %> USD</h5>
         <p class="card-text">
           Retorno Anual: <%= investment.calculate_annual_return %> USD <br>
-          Retorno Anual en <%= investment.cryptocurrency.name %>: <%= (investment.calculate_annual_return / investment.cryptocurrency.current_price) %> <%= investment.cryptocurrency.symbol %>
+          Retorno Anual en <%= investment.cryptocurrency.name %>: <%= (investment.calculate_annual_return / investment.cryptocurrency.current_price.to_f) unless investment.cryptocurrency.current_price.nil? %> <%= investment.cryptocurrency.symbol %>
         </p>
 
         <%= button_to 'Eliminar', investment_path(investment), method: :delete, data: { confirm: '¿Estás seguro?' }, class: 'btn btn-danger' %>
