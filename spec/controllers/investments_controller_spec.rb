@@ -6,7 +6,6 @@ RSpec.describe InvestmentsController, type: :controller do
       get :index
       expect(response).to render_template('index')
     end
-    # Agrega más pruebas según tus necesidades
   end
 
   describe 'GET #new' do
@@ -14,24 +13,23 @@ RSpec.describe InvestmentsController, type: :controller do
       get :new
       expect(response).to render_template('new')
     end
-    # Agrega más pruebas según tus necesidades
   end
 
   describe 'POST #create' do
 
-    let(:valid_params) { { investment: { cryptocurrency_id: 51, amount: 300 } } }
+    let(:valid_params) { { investment: { cryptocurrency_id: FactoryBot.create(:cryptocurrency).id, amount: 100 } } }
     subject { post :create, params: valid_params }
-
-    # it 'creates a new investment' do
-    #   expect { subject }.to change(Investment, :count).by(1)
-    # end
+    
+    it 'creates a new investment' do
+      expect { subject }.to change(Investment, :count).by(1)
+    end
 
     context 'with valid parameters' do
 
-      # it 'redirects to root_path' do
-      #   post :create, params: { investment: { cryptocurrency_id: 51, amount: 300 } }
-      #   expect(response).to redirect_to(root_path)
-      # end
+      it 'redirects to new_investiment' do
+        post :create, params: { investment: { cryptocurrency_id: 52, amount: 300 } }
+          expect(response).to redirect_to(new_investment_path)
+      end
     end
 
     context 'with invalid parameters' do
@@ -41,10 +39,10 @@ RSpec.describe InvestmentsController, type: :controller do
         }.not_to change(Investment, :count)
       end
 
-      # it 'renders the new template' do
-      #   post :create, params: { investment: { cryptocurrency_id: nil, amount: 100 } }
-      #   expect(response).to render_template('new')
-      # end
+      it 'redirects to new_investment' do
+        post :create, params: { investment: { cryptocurrency_id: nil, amount: 100 } }
+        expect(response).to redirect_to(new_investment_path)
+      end
     end
   end
 
