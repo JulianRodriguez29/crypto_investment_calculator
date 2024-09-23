@@ -7,7 +7,7 @@ class InvestmentsController < ApplicationController
   def index
     @investments = Investment.all
   end
-  
+
   def new
     @investment = Investment.new
   end
@@ -28,7 +28,7 @@ class InvestmentsController < ApplicationController
     @investment.destroy
     redirect_to root_path
   end
-  
+
   def export_json
     Rails.logger.info(@cryptocurrencies.inspect)
     respond_to do |format|
@@ -40,7 +40,7 @@ class InvestmentsController < ApplicationController
             current_price: crypto.current_price
           }
         end
-  
+
         render json: selected_data
       end
     end
@@ -69,7 +69,7 @@ class InvestmentsController < ApplicationController
       crypto_data << {
         name: row['Moneda'],
         monthly_interest: row['Interes_mensual'].to_f,
-        balance: row['balance_ini'].to_f	
+        balance: row['balance_ini'].to_f
       }
     end
     crypto_data
@@ -99,13 +99,13 @@ class InvestmentsController < ApplicationController
     JSON.parse(response.body)['rate'] if response.success?
   end
 
-  
+
   def to_csv
     attributes = %w{name symbol current_price}
     CSV.generate(headers: true) do |csv|
       csv << attributes
 
-      if @cryptocurrencies.present? # Verifica si @cryptocurrencies no es nil
+      if @cryptocurrencies.present?
         @cryptocurrencies.each do |crypto|
           csv << attributes.map { |attr| crypto.send(attr) }
         end
